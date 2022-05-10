@@ -122,7 +122,10 @@ class PlatformProvider extends OrchidServiceProvider
             ItemPermission::group('Post')
                 ->addPermission('posts.show', 'Show and List')
                 ->addPermission('posts.add', 'Add and Update')
-                ->addPermission('post.delete', 'Delete')
+                ->addPermission('post.delete', 'Delete'),
+                ItemPermission::group('Manage')
+                ->addPermission('manage.posts', 'Posts')
+
         ];
     }
 }
