@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Orchid\Crud\Resource;
 use Orchid\Screen\TD;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\TextArea;
+use Orchid\Screen\Fields\Upload;
 use Orchid\Screen\Sight;
 
 
@@ -30,6 +32,18 @@ class PostResource extends Resource
             Input::make("title")
                 ->title("Title")
                 ->placeholder("Enter Post title here"),
+
+                TextArea::make("body")
+                ->title("Body")
+                ->placeholder("Enter Post title here"),
+            Upload::make('images')
+                //->groups('photo')
+                // ->maxFiles(10)
+                // ->parallelUploads(2)
+                // ->maxFileSize(4)
+                // ->acceptedFiles('image/*')
+                // ->media()
+
         ];
     }
 
@@ -45,15 +59,23 @@ class PostResource extends Resource
 
             TD::make('title'),
 
+            TD::make('Featured Image')->render(function ($post) {
+                if($post->featuredImage) {
+                    return "<img src='{$post->featuredImage->url}' height='80' alt='{$post->featuredImage->alt}' title='{$post->featuredImage->title}' />";
+                }
+            }),
+
+            TD::make('owner')->render(function ($post) {
+                return $post->owner->name;
+            }),
+
+
             TD::make('created_at', 'Date of creation')
                 ->render(function ($model) {
-                    return $model->created_at->toDateTimeString();
+                    return $model->created_at->diffForHumans();
                 }),
 
-            TD::make('updated_at', 'Update date')
-                ->render(function ($model) {
-                    return $model->updated_at->toDateTimeString();
-                }),
+
         ];
     }
 
@@ -113,7 +135,7 @@ class PostResource extends Resource
      */
     public function with(): array
     {
-        return ['owner'];
+        return ['owner', 'featuredImage'];
     }
 
 
@@ -146,5 +168,16 @@ class PostResource extends Resource
     public static function trafficCop(): bool
     {
         return true;
+    }
+
+    public static function onSave($request, $model) {
+
+        $data = $request->all();
+        $data["user_id"] = $request->user()->id;
+        $images = $data["images"];
+        $data["featured_image_id"] = $images[0];
+        unset($data["images"]);
+        $model->forceFill($data)->save();
+        $model->attachment()->sync($images);
     }
 }
