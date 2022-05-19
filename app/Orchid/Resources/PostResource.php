@@ -89,8 +89,8 @@ class PostResource extends Resource
 
             TD::make('Featured Image')->render(function ($post) {
 
-                if ($post->featured_image) {
-                    return "<img src='{$post->featured_image->url}' height='80' alt='{$post->featured_image->alt}' title='{$post->featured_image->title}' />";
+                if ($post->featured_image_id) {
+                    return "<img src='{$post->featuredImage->url}' height='80' alt='{$post->featuredImage->alt}' title='{$post->featuredImage->title}' />";
                 }
             }),
 
