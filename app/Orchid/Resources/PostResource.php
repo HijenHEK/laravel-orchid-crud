@@ -120,7 +120,9 @@ class PostResource extends Resource
         return [
             Sight::make('id'),
             Sight::make('title'),
-            Sight::make('body'),
+            Sight::make('body')->render(function($post) {
+                return $post->body;
+            }),
             Sight::make('Featured Image')->render(function ($post) {
 
                 if ($post->featured_image_id) {
