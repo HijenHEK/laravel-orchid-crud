@@ -37,9 +37,10 @@ class PostResource extends Resource
 
 
     private $post;
+
     public function __construct(Request $request)
     {
-        $this->post =  (static::$model)::findOrFail($request->id);
+        $this->post =  (static::$model)::find($request->id);
     }
     public function fields(): array
     {
@@ -52,13 +53,13 @@ class PostResource extends Resource
             TextArea::make("body")
                 ->title("Body")
                 ->placeholder("Enter Post title here")->required(),
-            Cropper::make('post.featued_image_id')
+            Cropper::make('featured_image')
                 ->title('Featured  Image')
                 ->width(500)
                 ->height(300)
                 ->horizontal()
                 ->targetId()
-                ->value($this->post->featuredImage->url),
+                ->value( $this->post ? $this->post->featuredImage->url : true),
 
                 Upload::make('attachment')
                 //->groups('photo')
