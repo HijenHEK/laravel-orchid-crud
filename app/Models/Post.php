@@ -33,8 +33,7 @@ class Post extends Model
     //     );;
     // }
 
-    public function getFeaturedImageId() {
-        dd($this->featured_image_id);
-        return $this->featured_image_id;
+    public function featuredImage() {
+        return $this->hasOne(Attachment::class , "id" , "featured_image_id");
     }
 }

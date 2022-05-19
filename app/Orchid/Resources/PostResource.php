@@ -4,6 +4,7 @@ namespace App\Orchid\Resources;
 
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Crud\Resource;
@@ -20,11 +21,7 @@ use Orchid\Screen\Sight;
 
 class PostResource extends Resource
 {
-    public function __construct()
-    {
-        // dd(request());
-        //    $this->post = ;
-    }
+
     /**
      * The model the resource corresponds to.
      *
@@ -37,6 +34,13 @@ class PostResource extends Resource
      *
      * @return array
      */
+
+
+    private $post;
+    public function __construct(Request $request)
+    {
+        $this->post =  (static::$model)::findOrFail($request->id);
+    }
     public function fields(): array
     {
 
@@ -48,14 +52,13 @@ class PostResource extends Resource
             TextArea::make("body")
                 ->title("Body")
                 ->placeholder("Enter Post title here")->required(),
-            Cropper::make('featured_image')
+            Cropper::make('post.featued_image_id')
                 ->title('Featured  Image')
                 ->width(500)
                 ->height(300)
                 ->horizontal()
-                ->media()
                 ->targetId()
-                ->value("featured_image_id"),
+                ->value($this->post->featuredImage->url),
 
                 Upload::make('attachment')
                 //->groups('photo')
@@ -160,12 +163,12 @@ class PostResource extends Resource
      */
     public function with(): array
     {
-        return ['owner', "getFeaturedImageId", "attachment"];
+        return ['owner', "featuredImage", "attachment"];
     }
 
     public function attributes(): array
     {
-        return ["featured_image_id"];
+        return [];
     }
 
 
