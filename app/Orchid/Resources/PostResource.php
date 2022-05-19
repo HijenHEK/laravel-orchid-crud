@@ -8,16 +8,18 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Crud\Resource;
+use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Exceptions\FieldRequiredAttributeException;
 use Orchid\Screen\Fields\Cropper;
 use Orchid\Screen\TD;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Picture;
+use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Relation;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Fields\Upload;
 use Orchid\Screen\Sight;
-
+use Orchid\Support\Facades\Layout;
 
 class PostResource extends Resource
 {
@@ -50,7 +52,7 @@ class PostResource extends Resource
                 ->title("Title")
                 ->placeholder("Enter Post title here")->required(),
 
-            TextArea::make("body")
+            Quill::make("body")
                 ->title("Body")
                 ->placeholder("Enter Post title here")->required(),
             Cropper::make('featured_image')
@@ -118,6 +120,24 @@ class PostResource extends Resource
         return [
             Sight::make('id'),
             Sight::make('title'),
+            Sight::make('body'),
+            Sight::make('Featured Image')->render(function ($post) {
+
+                if ($post->featured_image_id) {
+                    return "<img src='{$post->featuredImage->url}' height='200' alt='{$post->featuredImage->alt}' title='{$post->featuredImage->title}' />";
+                }
+            }),
+            Sight::make('images')->render(function ($post) {
+                $images = "";
+                foreach ($post->attachment as $key => $image) {
+
+                     $images .= "<img src='{$image->url}' height='200' style='margin : 5px;' alt='{$image->alt}' title='{$image->title}' />";
+
+                }
+
+                return "<div>" . $images . "</div>";
+
+            }),
         ];
     }
 
