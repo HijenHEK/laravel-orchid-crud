@@ -4,9 +4,15 @@ namespace App\Orchid\Resources;
 
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
+use Orchid\Attachment\Models\Attachment;
 use Orchid\Crud\Resource;
+use Orchid\Screen\Exceptions\FieldRequiredAttributeException;
+use Orchid\Screen\Fields\Cropper;
 use Orchid\Screen\TD;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Picture;
+use Orchid\Screen\Fields\Relation;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Fields\Upload;
 use Orchid\Screen\Sight;
@@ -14,6 +20,11 @@ use Orchid\Screen\Sight;
 
 class PostResource extends Resource
 {
+    public function __construct()
+    {
+        // dd(request());
+        //    $this->post = ;
+    }
     /**
      * The model the resource corresponds to.
      *
@@ -28,21 +39,33 @@ class PostResource extends Resource
      */
     public function fields(): array
     {
+
         return [
             Input::make("title")
                 ->title("Title")
-                ->placeholder("Enter Post title here"),
+                ->placeholder("Enter Post title here")->required(),
 
-                TextArea::make("body")
+            TextArea::make("body")
                 ->title("Body")
-                ->placeholder("Enter Post title here"),
-            Upload::make('images')
+                ->placeholder("Enter Post title here")->required(),
+            Cropper::make('featured_image')
+                ->title('Featured  Image')
+                ->width(500)
+                ->height(300)
+                ->horizontal()
+                ->media()
+                ->targetId()
+                ->value("featured_image_id"),
+
+                Upload::make('attachment')
                 //->groups('photo')
-                // ->maxFiles(10)
-                // ->parallelUploads(2)
-                // ->maxFileSize(4)
-                // ->acceptedFiles('image/*')
-                // ->media()
+                ->maxFiles(10)
+                ->parallelUploads(2)
+                ->maxFileSize(0.5)
+                ->acceptedFiles('image/*')
+                ->media()
+                ->value("attachment")
+            // ->value(function ($post) {dd ($post) ;return $post->attachment();})
 
         ];
     }
@@ -54,14 +77,16 @@ class PostResource extends Resource
      */
     public function columns(): array
     {
+
         return [
             TD::make('id'),
 
             TD::make('title'),
 
             TD::make('Featured Image')->render(function ($post) {
-                if($post->featuredImage) {
-                    return "<img src='{$post->featuredImage->url}' height='80' alt='{$post->featuredImage->alt}' title='{$post->featuredImage->title}' />";
+
+                if ($post->featured_image) {
+                    return "<img src='{$post->featured_image->url}' height='80' alt='{$post->featured_image->alt}' title='{$post->featured_image->title}' />";
                 }
             }),
 
@@ -135,7 +160,12 @@ class PostResource extends Resource
      */
     public function with(): array
     {
-        return ['owner', 'featuredImage'];
+        return ['owner', "getFeaturedImageId", "attachment"];
+    }
+
+    public function attributes(): array
+    {
+        return ["featured_image_id"];
     }
 
 
@@ -170,14 +200,32 @@ class PostResource extends Resource
         return true;
     }
 
-    public static function onSave($request, $model) {
+    /**
+     * @throws \Throwable
+     */
+
+    public static function onSave($request, $model)
+    {
+
 
         $data = $request->all();
+        $images = $data["attachment"];
+        $featured_image = $data["featured_image"];
+        unset($data["attachment"]);
+        unset($data["featured_image"]);
+
+         if (!$featured_image) {
+            throw  ValidationException::withMessages(["Please upload or choose a featured image "]);
+         }
+
         $data["user_id"] = $request->user()->id;
-        $images = $data["images"];
-        $data["featured_image_id"] = $images[0];
-        unset($data["images"]);
+        $data["featured_image_id"] = $featured_image ?? $images[0];
+
+
         $model->forceFill($data)->save();
-        $model->attachment()->sync($images);
+
+        if (isset($images[0]) && $images[0] != "undefined") {
+            $model->attachment()->sync($images);
+        }
     }
 }

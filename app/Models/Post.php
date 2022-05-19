@@ -8,10 +8,12 @@ use Orchid\Attachment\Attachable;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Filters\Filterable;
 use Orchid\Screen\AsSource;
+use Orchid\Platform\Dashboard;
 
 class Post extends Model
 {
     use HasFactory, AsSource, Filterable, Attachable;
+
 
     // public function images() {
     //     return $this->hasMany(Image::class);
@@ -21,7 +23,18 @@ class Post extends Model
         return $this->belongsTo(User::class , "user_id");
     }
 
-    public function featuredImage() {
-        return $this->belongsTo(Attachment::class , "featured_image_id");
+    // public function featuredImage() {
+    //     return $this->morphTo(
+    //         Dashboard::model(Attachment::class),
+    //         'attachmentable',
+    //         'attachmentable',
+    //         'attachmentable_id',
+    //         'attachment_id'
+    //     );;
+    // }
+
+    public function getFeaturedImageId() {
+        dd($this->featured_image_id);
+        return $this->featured_image_id;
     }
 }

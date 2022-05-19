@@ -6,6 +6,7 @@ use App\Models\Image;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Orchid\Attachment\Models\Attachment;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
@@ -30,7 +31,7 @@ class PostFactory extends Factory
             "title" => $this->faker->sentence(),
             "body" => $this->faker->sentences(rand(1, 5), true),
             "user_id" => User::all()->random()->id,
-            "featured_image_id" => Image::create(["path" => $this->faker->imageUrl(), "post_id" => self::$id]),
+            "featured_image_id" => 0
         ];
     }
 }
