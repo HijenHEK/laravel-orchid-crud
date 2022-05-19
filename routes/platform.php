@@ -117,5 +117,5 @@ Route::screen('example-advanced', ExampleFieldsAdvancedScreen::class)->name('pla
 //Route::screen('idea', Idea::class, 'platform.screens.idea');
 
 
-Route::screen('post/{post?}' , PostEditScreen::class)->name('platform.post.edit');
-Route::screen('posts' , PostListScreen::class)->name('platform.post.edit');
+Route::screen('post/{post?}' , PostEditScreen::class)->name('platform.posts.edit');
+Route::screen('posts' , PostListScreen::class)->name('platform.posts.list');

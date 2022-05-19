@@ -29,6 +29,12 @@ class PlatformProvider extends OrchidServiceProvider
     {
         return [
 
+            Menu::make(__('Posts'))
+                ->icon('post')
+                ->route('platform.posts.list')
+                ->permission('manage.posts')
+                ->title(__('Manage Posts')),
+
             Menu::make(__('Users'))
                 ->icon('user')
                 ->route('platform.systems.users')
