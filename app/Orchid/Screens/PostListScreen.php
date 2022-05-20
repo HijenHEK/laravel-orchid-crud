@@ -2,10 +2,19 @@
 
 namespace App\Orchid\Screens;
 
+use App\Models\Post;
+use App\Orchid\Layouts\PostListLayout;
+use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Layouts\Table;
 use Orchid\Screen\Screen;
+use Orchid\Screen\TD;
+use Illuminate\Support\Str;
 
 class PostListScreen extends Screen
 {
+
+
     /**
      * Query data.
      *
@@ -13,7 +22,9 @@ class PostListScreen extends Screen
      */
     public function query(): iterable
     {
-        return [];
+        return [
+            "posts" => Post::paginate(),
+        ];
     }
 
     /**
@@ -23,7 +34,7 @@ class PostListScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'PostListScreen';
+        return 'posts';
     }
 
     /**
@@ -33,7 +44,12 @@ class PostListScreen extends Screen
      */
     public function commandBar(): iterable
     {
-        return [];
+        return [
+            Link::make('Create new')
+                ->icon('pencil')
+                ->route('platform.posts.edit')
+
+        ];
     }
 
     /**
@@ -43,6 +59,9 @@ class PostListScreen extends Screen
      */
     public function layout(): iterable
     {
-        return [];
+        return [
+            PostListLayout::class
+
+        ];
     }
 }
