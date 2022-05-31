@@ -19,21 +19,15 @@ class Post extends Model
     //     return $this->hasMany(Image::class);
     // }
 
+    protected $fillable = [
+        'featured_image',
+        'title',
+        'body'
+    ];
+
     public function owner() {
         return $this->belongsTo(User::class , "user_id");
     }
 
-    // public function featuredImage() {
-    //     return $this->morphTo(
-    //         Dashboard::model(Attachment::class),
-    //         'attachmentable',
-    //         'attachmentable',
-    //         'attachmentable_id',
-    //         'attachment_id'
-    //     );;
-    // }
 
-    public function featuredImage() {
-        return $this->hasOne(Attachment::class , "id" , "featured_image_id");
-    }
 }

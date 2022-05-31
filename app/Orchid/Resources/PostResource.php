@@ -60,8 +60,7 @@ class PostResource extends Resource
                 ->width(500)
                 ->height(300)
                 ->horizontal()
-                ->targetId()
-                ->value( $this->post ? $this->post->featuredImage->url : true),
+                ->value('featured_image')->required(),
 
                 Upload::make('attachment')
                 //->groups('photo')
@@ -70,7 +69,7 @@ class PostResource extends Resource
                 ->maxFileSize(0.5)
                 ->acceptedFiles('image/*')
                 ->media()
-                ->value("attachment")
+                ->value("attachment")->required()
             // ->value(function ($post) {dd ($post) ;return $post->attachment();})
 
         ];
@@ -91,8 +90,8 @@ class PostResource extends Resource
 
             TD::make('Featured Image')->render(function ($post) {
 
-                if ($post->featured_image_id) {
-                    return "<img src='{$post->featuredImage->url}' height='80' alt='{$post->featuredImage->alt}' title='{$post->featuredImage->title}' />";
+                if ($post->featured_image) {
+                    return "<img src='{$post->featured_image}' height='80'  />";
                 }
             }),
 
@@ -125,8 +124,8 @@ class PostResource extends Resource
             }),
             Sight::make('Featured Image')->render(function ($post) {
 
-                if ($post->featured_image_id) {
-                    return "<img src='{$post->featuredImage->url}' height='200' alt='{$post->featuredImage->alt}' title='{$post->featuredImage->title}' />";
+                if ($post->featured_image) {
+                    return "<img src='{$post->featured_image}' />";
                 }
             }),
             Sight::make('images')->render(function ($post) {
@@ -186,7 +185,7 @@ class PostResource extends Resource
      */
     public function with(): array
     {
-        return ['owner', "featuredImage", "attachment"];
+        return ['owner', "attachment"];
     }
 
     public function attributes(): array
@@ -238,14 +237,8 @@ class PostResource extends Resource
         $images = $data["attachment"];
         $featured_image = $data["featured_image"];
         unset($data["attachment"]);
-        unset($data["featured_image"]);
-
-         if (!$featured_image) {
-            throw  ValidationException::withMessages(["Please upload or choose a featured image "]);
-         }
 
         $data["user_id"] = $request->user()->id;
-        $data["featured_image_id"] = $featured_image ?? $images[0];
 
 
         $model->forceFill($data)->save();

@@ -31,7 +31,7 @@ class PostFactory extends Factory
             "title" => $this->faker->sentence(),
             "body" => $this->faker->sentences(rand(1, 5), true),
             "user_id" => User::all()->random()->id,
-            "featured_image_id" => 0
+            "featured_image" => ""
         ];
     }
 }

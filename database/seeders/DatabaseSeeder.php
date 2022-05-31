@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             $file = new File($image );
             $attachment = $file->load();
             $post->attachment()->sync($attachment);
-            $post->featured_image_id = $attachment->id;
+            $post->featured_image = $attachment->url;
             $post->save();
         }
     }

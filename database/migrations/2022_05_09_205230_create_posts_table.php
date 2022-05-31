@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string("title");
             $table->text("body");
             $table->foreignId("user_id");
-            $table->unsignedInteger("featured_image_id");
+            $table->string("featured_image");
             $table->timestamps();
         });
     }

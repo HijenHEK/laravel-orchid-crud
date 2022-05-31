@@ -104,7 +104,7 @@ class PostEditScreen extends Screen
             "title" => $request->get('post')['title'] ,
             "body" => $request->get('post')['body'],
             "user_id" => $request->user()->id,
-            "featured_image_id" => $request->get("post")['featuredImage']
+            "featured_image" => $request->get("post")['featured_image']
         ];
         $post->fill($fields)->save();
 
