@@ -4,6 +4,7 @@ namespace App\Orchid\Screens;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Cropper;
 use Orchid\Screen\Fields\Input;
@@ -121,9 +122,10 @@ class PostEditScreen extends Screen
         $post->fill($fields)->save();
 
         if ($request->has('post.attachment')) {
-            $post->attachment()->syncWithoutDetaching(
-                $request->get('post.attachment')
+            $post->attachment()->sync(
+                $request->input('post.attachment')
             );
+            $this->moveAttachments($post);
         }
 
         Alert::info("post " . ($post->exists ?  'updated' : 'created') . " successfully");
@@ -143,5 +145,28 @@ class PostEditScreen extends Screen
         Alert::info('post deleted successfully');
 
         return redirect()->route('platform.posts.list');
+    }
+
+
+    /**
+     * move attachments to specified path
+     */
+    private function moveAttachments(Post $post, $path = null)
+    {
+        $path =  $path ?? "posts/{$post->id}/";
+        foreach ($post->attachment as $key => $attachment) {
+
+            $file = $attachment->name . '.' . $attachment->extension;
+
+            Storage::disk($attachment->disk)
+                ->move(
+                    $attachment->path . $file,
+                    $path . $file
+                );
+
+            $attachment->update([
+                'path' => $path
+            ]);
+        }
     }
 }
