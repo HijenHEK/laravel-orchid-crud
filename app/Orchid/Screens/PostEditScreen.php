@@ -5,6 +5,7 @@ namespace App\Orchid\Screens;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Orchid\Attachment\Models\Attachment;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Cropper;
 use Orchid\Screen\Fields\Input;
@@ -155,18 +156,32 @@ class PostEditScreen extends Screen
     {
         $path =  $path ?? "posts/{$post->id}/";
         foreach ($post->attachment as $key => $attachment) {
-
-            $file = $attachment->name . '.' . $attachment->extension;
-
-            Storage::disk($attachment->disk)
-                ->move(
-                    $attachment->path . $file,
-                    $path . $file
-                );
-
-            $attachment->update([
-                'path' => $path
-            ]);
+            $isImage = str_contains($attachment->mime, 'image');
+            $this->moveAttachment($attachment, $path . ($isImage ? 'images/original/' : ''));
         }
+    }
+
+    /**
+     * move attachment to specified path
+     */
+    private function moveAttachment(Attachment $attachment, string $path)
+    {
+        $file = $attachment->name . '.' . $attachment->extension;
+
+        Storage::disk($attachment->disk)
+            ->move(
+                $attachment->path . $file,
+                $path . $file
+            );
+
+        // $this->generateThumbnail($attachment);
+
+        $attachment->update([
+            'path' => $path
+        ]);
+    }
+
+    private function generateThumbnail($attachment)
+    {
     }
 }
