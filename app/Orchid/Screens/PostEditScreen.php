@@ -81,8 +81,10 @@ class PostEditScreen extends Screen
                     ->title('Content')
                     ->placeholder('enter content here'),
 
-                Cropper::make("post.featuredImage")
-                    ->title('Featured Image')->targetId()->required(),
+                Cropper::make("post.featured_image")
+                    ->title('Featured Image')
+                    ->targetId()
+                    ->required(),
                 Upload::make("post.images")
                     ->title("images")
                     ->media(),

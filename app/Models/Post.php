@@ -29,5 +29,9 @@ class Post extends Model
         return $this->belongsTo(User::class , "user_id");
     }
 
+    public function featuredImage() {
+        return $this->hasOne(Attachment::class ,"id", "featured_image");
+    }
+
 
 }

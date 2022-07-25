@@ -41,10 +41,9 @@ class PostListLayout extends Table
             }),
 
 
-            TD::make('Action')->render(function () {
-                return Layout::list([
-                    Link::make('Edit')->route('platform.posts.edit')->icon("envolope"),
-                ]);
+            TD::make('Action')->render(function (Post $post) {
+                return    Link::make('Edit')->route('platform.posts.edit', $post->id)->icon("envolope");
+
             }
             ),
 
