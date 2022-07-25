@@ -10,6 +10,7 @@ use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Upload;
 use Orchid\Screen\Screen;
+use Orchid\Screen\Sight;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
 
@@ -24,6 +25,8 @@ class PostEditScreen extends Screen
      */
     public function query(Post $post): iterable
     {
+
+        $post->load('attachment');
         return [
             "post" => $post
         ];
@@ -52,7 +55,7 @@ class PostEditScreen extends Screen
                 ->method('createOrUpdate')
                 ->canSee(!$this->post->exists),
 
-            Button::make('Edit')
+            Button::make('Save')
                 ->icon('note')
                 ->method('createOrUpdate')
                 ->canSee($this->post->exists),
@@ -84,12 +87,19 @@ class PostEditScreen extends Screen
                 Cropper::make("post.featured_image")
                     ->title('Featured Image')
                     ->targetId()
+                    ->width(400)
+                    ->heigh(400)
                     ->required(),
-                Upload::make("post.images")
-                    ->title("images")
-                    ->media(),
+
+                Upload::make("post.attachment")
+                    ->title("attachment")
+                    ->media()
+                    ->value(true),
+
+
 
             ]),
+
         ];
     }
 
@@ -103,20 +113,26 @@ class PostEditScreen extends Screen
 
 
         $fields = [
-            "title" => $request->get('post')['title'] ,
+            "title" => $request->get('post')['title'],
             "body" => $request->get('post')['body'],
             "user_id" => $request->user()->id,
             "featured_image" => $request->get("post")['featured_image']
         ];
         $post->fill($fields)->save();
 
-        Alert::info('post created successfully');
+        if ($request->has('post.attachment')) {
+            $post->attachment()->syncWithoutDetaching(
+                $request->get('post.attachment')
+            );
+        }
+
+        Alert::info("post " . ($post->exists ?  'updated' : 'created') . " successfully");
 
         return redirect()->route('platform.posts.list');
     }
 
 
-        /**
+    /**
      * delete
      */
 
@@ -128,6 +144,4 @@ class PostEditScreen extends Screen
 
         return redirect()->route('platform.posts.list');
     }
-
-
 }

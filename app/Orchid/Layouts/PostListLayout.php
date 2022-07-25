@@ -31,20 +31,20 @@ class PostListLayout extends Table
     {
         return [
             TD::make('title', 'Title')
-            ->render(function (Post $post) {
-                return Link::make($post->title)
-                    ->route('platform.posts.edit', $post);
-            }),
+                ->render(function (Post $post) {
+                    return Link::make($post->title)
+                        ->route('platform.posts.edit', $post);
+                }),
 
-            TD::make('body' , 'Content')->render(function(Post $post) {
+            TD::make('body', 'Content')->render(function (Post $post) {
                 return Str::limit($post->body, 20, '...');
             }),
 
 
-            TD::make('Action')->render(function (Post $post) {
-                return    Link::make('Edit')->route('platform.posts.edit', $post->id)->icon("envolope");
-
-            }
+            TD::make('Action')->render(
+                function (Post $post) {
+                    return    Link::make('Edit')->route('platform.posts.edit', $post->id)->icon("envolope");
+                }
             ),
 
 
