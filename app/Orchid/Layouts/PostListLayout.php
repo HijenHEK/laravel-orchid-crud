@@ -33,7 +33,7 @@ class PostListLayout extends Table
             TD::make('title', 'Title')
                 ->render(function (Post $post) {
                     return Link::make($post->title)
-                        ->route('platform.posts.edit', $post);
+                        ->route('platform.posts.show', $post);
                 }),
 
             TD::make('body', 'Content')->render(function (Post $post) {

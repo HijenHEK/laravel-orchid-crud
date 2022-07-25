@@ -12,6 +12,7 @@ use App\Orchid\Screens\Examples\ExampleTextEditorsScreen;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\PostEditScreen;
 use App\Orchid\Screens\PostListScreen;
+use App\Orchid\Screens\PostShowScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
 use App\Orchid\Screens\User\UserEditScreen;
@@ -119,3 +120,4 @@ Route::screen('example-advanced', ExampleFieldsAdvancedScreen::class)->name('pla
 
 Route::screen('post/{post?}' , PostEditScreen::class)->name('platform.posts.edit');
 Route::screen('posts' , PostListScreen::class)->name('platform.posts.list');
+Route::screen('posts/{post}' , PostShowScreen::class)->name('platform.posts.show');
