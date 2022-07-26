@@ -15,6 +15,7 @@ use Orchid\Screen\Screen;
 use Orchid\Screen\Sight;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
+use Intervention\Image\Facades\Image;
 
 class PostEditScreen extends Screen
 {
@@ -122,7 +123,7 @@ class PostEditScreen extends Screen
         ];
         $post->fill($fields)->save();
 
-        if ($request->has('post.attachment')) {
+        if ($request->has('post.attachment') && $request->input('post.attachment') != $post->attachment->pluck('id')->all() ) {
             $post->attachment()->sync(
                 $request->input('post.attachment')
             );
@@ -174,14 +175,31 @@ class PostEditScreen extends Screen
                 $path . $file
             );
 
-        // $this->generateThumbnail($attachment);
 
         $attachment->update([
             'path' => $path
         ]);
+
+        if (str_contains($attachment->mime, 'image')) {
+            $this->generateThumbnail($attachment);
+        }
     }
 
     private function generateThumbnail($attachment)
     {
+        $name = $attachment->name . '.' . $attachment->extension;
+        $image = Storage::disk($attachment->disk)->get($attachment->path  . $name);
+        $image = Image::make($image)->resize(300, 300, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $thumbnail_path = str_replace('original', 'thumbnail', $attachment->path);
+
+        if (!Storage::disk($attachment->disk)->exists($thumbnail_path)) {
+
+            Storage::disk('public')->makeDirectory($thumbnail_path);
+        }
+
+        $image->save(storage_path('app/public/' . $thumbnail_path  . $name));
     }
 }
