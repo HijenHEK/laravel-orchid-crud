@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Orchid\Attachment\Models\Attachment as OrchidAttachment;
+use Orchid\Platform\Dashboard;
 
 /**
  * Class Attachment.
@@ -17,10 +19,11 @@ class Attachment extends OrchidAttachment
 
     public function getThumbnailUrlAttribute()
     {
-        return $this->isImage() ? str_replace("/original/", "/thumbnail/" ,$this->relativeUrl ) : null;
+        return $this->isImage() ? str_replace("/original/", "/thumbnail/", $this->relativeUrl) : null;
     }
 
-    public function isImage() {
+    public function isImage()
+    {
         return str_contains($this->mime, 'image');
     }
 }

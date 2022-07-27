@@ -123,7 +123,7 @@ class PostEditScreen extends Screen
         ];
         $post->fill($fields)->save();
 
-        if ($request->has('post.attachment') && $request->input('post.attachment') != $post->attachment->pluck('id')->all() ) {
+        if ($request->has('post.attachment') ) {
             $post->attachment()->sync(
                 $request->input('post.attachment')
             );

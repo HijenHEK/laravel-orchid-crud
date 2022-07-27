@@ -68,7 +68,9 @@ class PostShowScreen extends Screen
                     return "<h2> {$post->title} </h2>";
                 }),
                 Sight::make('featured image')->render(function ($post) {
-                    return '<img style="width:300px; border-radius:5px;" src="' . $post->featuredImage->url . '" />';
+                    if($post->featuredImage) {
+                        return '<img style="width:300px; border-radius:5px;" src="' . $post->featuredImage->url . '" />';
+                    }
                 }),
                 Sight::make('body')->render(function (Post $post) {
                     return "<div> {$post->body} </div>";
@@ -83,8 +85,8 @@ class PostShowScreen extends Screen
                 }),
                 Sight::make('attachment', 'images')->render(function ($post) {
                         $content = "<div  style='display:flex; flex-wrap:wrap;'>";
-                        foreach ($post->attachment as $key => $attachment) {
-                            $content .= "<div>  <img  style='width:250px; margin: 5px; border-radius:5px;' src= '{$attachment->url}' /> </div>";
+                        foreach ($post->attachment as $attachment) {
+                            $content .= "<div>  <img  style='width:250px; margin: 5px; border-radius:5px;' src= '{$attachment->thumbnailUrl}' /> </div>";
                         }
                         $content .= "</div>";
 

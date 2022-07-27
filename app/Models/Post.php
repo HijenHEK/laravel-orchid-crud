@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Orchid\Attachment\Attachable;
+use App\Traits\Attachable;
 use Orchid\Filters\Filterable;
 use Orchid\Screen\AsSource;
 use Orchid\Platform\Dashboard;
@@ -12,11 +12,6 @@ use Orchid\Platform\Dashboard;
 class Post extends Model
 {
     use HasFactory, AsSource, Filterable, Attachable;
-
-
-    // public function images() {
-    //     return $this->hasMany(Image::class);
-    // }
 
     protected $fillable = [
         'featured_image',
