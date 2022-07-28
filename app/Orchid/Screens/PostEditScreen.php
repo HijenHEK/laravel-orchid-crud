@@ -122,8 +122,7 @@ class PostEditScreen extends Screen
             "featured_image" => $request->get("post")['featured_image']
         ];
         $post->fill($fields)->save();
-
-        if ($request->has('post.attachment') ) {
+        if ($request->has('post.attachment') && $request->input('post.attachment') != $post->attachment->pluck('id')->all() ) {
             $post->attachment()->sync(
                 $request->input('post.attachment')
             );
@@ -156,9 +155,8 @@ class PostEditScreen extends Screen
     private function moveAttachments(Post $post, $path = null)
     {
         $path =  $path ?? "posts/{$post->id}/";
-        foreach ($post->attachment as $key => $attachment) {
-            $isImage = str_contains($attachment->mime, 'image');
-            $this->moveAttachment($attachment, $path . ($isImage ? 'images/original/' : ''));
+        foreach ($post->attachment as $attachment) {
+            $this->moveAttachment($attachment, $path . ($attachment->isImage() ? 'images/original/' : ''));
         }
     }
 
@@ -180,7 +178,7 @@ class PostEditScreen extends Screen
             'path' => $path
         ]);
 
-        if (str_contains($attachment->mime, 'image')) {
+        if ($attachment->isImage()) {
             $this->generateThumbnail($attachment);
         }
     }
