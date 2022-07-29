@@ -14,12 +14,12 @@ class Attachment extends OrchidAttachment
     public function __construct()
     {
         parent::__construct();
-        array_push($this->appends, 'thumbnailUrl');
+        array_push($this->appends, 'originalUrl');
     }
 
-    public function getThumbnailUrlAttribute()
+    public function getOriginalUrlAttribute()
     {
-        return $this->isImage() ? str_replace("/original/", "/thumbnail/", $this->relativeUrl) : null;
+        return $this->isImage() ? str_replace("/thumbnail/", "/original/", $this->relativeUrl) : null;
     }
 
     public function isImage()

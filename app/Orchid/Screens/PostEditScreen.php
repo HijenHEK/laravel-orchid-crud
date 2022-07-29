@@ -195,7 +195,7 @@ class PostEditScreen extends Screen
             $constraint->aspectRatio();
         });
 
-        $thumbnail_path = str_replace('original', 'thumbnail', $attachment->path);
+        $thumbnail_path = str_replace('/original/', '/thumbnail/', $attachment->path);
 
         if (!Storage::disk($attachment->disk)->exists($thumbnail_path)) {
 
@@ -203,5 +203,9 @@ class PostEditScreen extends Screen
         }
 
         $image->save(storage_path('app/public/' . $thumbnail_path  . $name));
+
+        $attachment->update([
+            'path' => $thumbnail_path
+        ]);
     }
 }

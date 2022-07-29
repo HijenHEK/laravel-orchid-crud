@@ -86,7 +86,7 @@ class PostShowScreen extends Screen
                 Sight::make('attachment', 'images')->render(function ($post) {
                         $content = "<div  style='display:flex; flex-wrap:wrap;'>";
                         foreach ($post->attachment as $attachment) {
-                            $content .= "<div>  <img  style='width:250px; margin: 5px; border-radius:5px;' src= '{$attachment->thumbnailUrl}' /> </div>";
+                            $content .= "<div>  <img  style='width:250px; margin: 5px; border-radius:5px;' src= '{$attachment->url}' /> </div>";
                         }
                         $content .= "</div>";
 
