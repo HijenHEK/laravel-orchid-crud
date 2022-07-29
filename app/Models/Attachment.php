@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\Storage;
 use Orchid\Attachment\Models\Attachment as OrchidAttachment;
 use Orchid\Platform\Dashboard;
 
@@ -25,5 +26,14 @@ class Attachment extends OrchidAttachment
     public function isImage()
     {
         return str_contains($this->mime, 'image');
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (Attachment $attachment) {
+            Storage::disk($attachment->disk)->delete($attachment->path . $attachment->name . '.' . $attachment->extension);
+        });
     }
 }
