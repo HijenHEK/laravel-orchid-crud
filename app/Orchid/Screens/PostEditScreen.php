@@ -5,7 +5,7 @@ namespace App\Orchid\Screens;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Orchid\Attachment\Models\Attachment;
+use App\Models\Attachment;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Cropper;
 use Orchid\Screen\Fields\Input;
@@ -114,18 +114,21 @@ class PostEditScreen extends Screen
     {
 
 
-
         $fields = [
             "title" => $request->get('post')['title'],
             "body" => $request->get('post')['body'],
             "user_id" => $request->user()->id,
             "featured_image" => $request->get("post")['featured_image']
         ];
+
         $post->fill($fields)->save();
+
         if ($request->has('post.attachment') && $request->input('post.attachment') != $post->attachment->pluck('id')->all() ) {
             $post->attachment()->sync(
                 $request->input('post.attachment')
             );
+            // renew model instance
+            $post = Post::find($post->id);
             $this->moveAttachments($post);
         }
 
@@ -155,6 +158,7 @@ class PostEditScreen extends Screen
     private function moveAttachments(Post $post, $path = null)
     {
         $path =  $path ?? "posts/{$post->id}/";
+
         foreach ($post->attachment as $attachment) {
             $this->moveAttachment($attachment, $path . ($attachment->isImage() ? 'images/original/' : ''));
         }
