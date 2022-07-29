@@ -90,8 +90,7 @@ class PostEditScreen extends Screen
                 Cropper::make("post.featured_image")
                     ->title('Featured Image')
                     ->targetId()
-                    ->width(400)
-                    ->heigh(400)
+                    ->width('400px')
                     ->required(),
 
                 Upload::make("post.attachment")
@@ -122,14 +121,17 @@ class PostEditScreen extends Screen
         ];
 
         $post->fill($fields)->save();
+        $attachments_path = "posts/{$post->id}/";
+        $featuredImage = Attachment::find($post->featured_image);
+        $this->moveAttachment($featuredImage ,  $attachments_path . ($featuredImage->isImage() ? 'images/original/' : ''));
 
-        if ($request->has('post.attachment') && $request->input('post.attachment') != $post->attachment->pluck('id')->all() ) {
+        if ($request->has('post.attachment') && $request->input('post.attachment') != $post->attachment->pluck('id')->all()) {
             $post->attachment()->sync(
                 $request->input('post.attachment')
             );
             // renew model instance
             $post = Post::find($post->id);
-            $this->moveAttachments($post);
+            $this->moveAttachments($post, $attachments_path);
         }
 
         Alert::info("post " . ($post->exists ?  'updated' : 'created') . " successfully");
