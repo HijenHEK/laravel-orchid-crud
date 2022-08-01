@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Attachment;
+use App\Models\Category;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Cropper;
 use Orchid\Screen\Fields\Input;
@@ -16,6 +17,7 @@ use Orchid\Screen\Sight;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
 use Intervention\Image\Facades\Image;
+use Orchid\Screen\Fields\Relation;
 
 class PostEditScreen extends Screen
 {
@@ -82,6 +84,11 @@ class PostEditScreen extends Screen
                 Input::make("post.title")
                     ->title('Title')
                     ->placeholder('enter title here'),
+
+                    Relation::make("category")
+                    ->fromModel(Category::class, 'name')
+                    ->title('Category')
+                    ->placeholder('Choose a category here'),
 
                 Quill::make("post.body")
                     ->title('Content')

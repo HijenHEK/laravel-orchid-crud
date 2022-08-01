@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Post;
 use Faker\Generator as Faker;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -19,7 +20,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            PostSeeder::class
+            PostSeeder::class,
+            CategorySeeder::class
         ]);
 
         foreach (Post::all() as $key => $post) {
@@ -28,7 +30,10 @@ class DatabaseSeeder extends Seeder
             $attachment = $file->load();
             $post->attachment()->sync($attachment);
             $post->featured_image = $attachment->url;
+            $post->category_id = Category::all()->random()->id;
             $post->save();
         }
+
+
     }
 }
