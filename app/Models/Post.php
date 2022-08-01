@@ -23,6 +23,10 @@ class Post extends Model
         return $this->belongsTo(User::class , "user_id");
     }
 
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
+
     public function featuredImage() {
         return $this->hasOne(Attachment::class ,"id", "featured_image");
     }
